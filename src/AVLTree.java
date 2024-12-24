@@ -1,13 +1,15 @@
-public class AVLTree 
+public class AVLTree
 {
-
+//---------------------------------------------------------------------------------------
     private class Vertex {
 
         int data;
         Vertex left = null;
         Vertex right = null;
         Vertex parent = null;
-        //int h;//the hieght difference between the left and right subtrees.
+        
+        int rightDecendents = 0;
+        int leftDecendents = 0;
         
         //Vertex constructors:
         public Vertex(int data, Vertex left, Vertex right) {
@@ -66,11 +68,23 @@ public class AVLTree
             return this.parent.getRight() == this;
         }
 
-    }
+
+    }//End of Vertex class.
+//---------------------------------------------------------------------------------------
 
     Vertex root;
     int size = 0;
 
+    //getter methods:
+    public Vertex getRoot() {return this.root;}
+    public int getSize() {return this.size;}
+    public int getRootData() {return this.root.getData();}
+
+    //Setter methods:
+    public void setRoot(Vertex root) {this.root = root;}
+    public void setSize(int size) {this.size = size;}
+    public void setRootData(int data) {this.getRoot().setData(data);}
+//---------------------------------------------------------------------------------------
     //AVL tree rotation methods:
     private void leftRotation(Vertex y) {
         Vertex t1 = y.getParent().getLeft();
@@ -118,7 +132,22 @@ public class AVLTree
         rightRotation(z);
         leftRotation(z);
     }
+    //End of rotation methods.
+//---------------------------------------------------------------------------------------
+
+    public boolean isEmpty() {return this.size == 0;}
+
+    public void insert(int newData) {
+        
+        Vertex newVertex = new Vertex(newData);
+
+        if (this.isEmpty()) {
+            this.setRoot(newVertex);
+            size++;
+            return;
+        }
 
 
 
+    }
 }
