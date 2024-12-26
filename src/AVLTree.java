@@ -170,9 +170,9 @@ private class Vertex {
         }
 
         this.size++;
-        Vertex z = findUnbalanced(newVertex);
-        
-        if (z != null) {
+        Vertex[] zyx = findUnbalanced(newVertex);
+        // TODO: Finish insert() in the case that the tree was unbalanced.
+        if (zyx[0] != null) {
             
 
 
@@ -180,8 +180,10 @@ private class Vertex {
         }
 
     }
-
-    private Vertex findUnbalanced(Vertex vert) {
+    //TODO: Finish this function
+    private Vertex[] findUnbalanced(Vertex vert) {
+        
+        Vertex[] xyz = new Vertex[3];
         
         Vertex unbalanced = null;
 
@@ -193,7 +195,9 @@ private class Vertex {
                 vert = vert.getParent();
                 vert.incrementLeftDescendents();
                 
-                if (!vert.VerifyAVL()) return vert;
+                if (!vert.VerifyAVL()) {
+
+                }
 
             }
 
@@ -202,11 +206,13 @@ private class Vertex {
                 vert = vert.getParent();
                 vert.incrementRightDescendents();
                 
-                if (!vert.VerifyAVL()) return vert;
+                if (!vert.VerifyAVL()) {
+
+                }
             }
         }//End while
 
-        return vert;
+        return xyz;
     
     }
 
