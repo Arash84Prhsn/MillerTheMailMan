@@ -1,12 +1,12 @@
 public class AVLTree
 {
-//---------------------------------------------------------------------------------------
-    private class Vertex {
+//-------------------------------------------------------------------------------------------------------------------------------------------
+private class Vertex {
 
-        int data;
-        Vertex left = null;
-        Vertex right = null;
-        Vertex parent = null;
+        private int data;
+        private Vertex left = null;
+        private Vertex right = null;
+        private Vertex parent = null;
         
         int rightDecendents = 0;
         int leftDecendents = 0;
@@ -68,9 +68,18 @@ public class AVLTree
             return this.parent.getRight() == this;
         }
 
+        public void incrementLeftDescendents(){leftDecendents++;}
+        public void incrementRightDescendents(){rightDecendents++;}
+
+        public boolean VerifyAVL(){
+            int dif = Math.abs(leftDecendents - rightDecendents);
+            if (dif > 1) return false;
+            return true;
+        }
+
 
     }//End of Vertex class.
-//---------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
     Vertex root;
     int size = 0;
@@ -84,7 +93,7 @@ public class AVLTree
     public void setRoot(Vertex root) {this.root = root;}
     public void setSize(int size) {this.size = size;}
     public void setRootData(int data) {this.getRoot().setData(data);}
-//---------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
     //AVL tree rotation methods:
     private void leftRotation(Vertex y) {
         Vertex t1 = y.getParent().getLeft();
@@ -133,7 +142,7 @@ public class AVLTree
         leftRotation(z);
     }
     //End of rotation methods.
-//---------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
     public boolean isEmpty() {return this.size == 0;}
 
@@ -147,7 +156,58 @@ public class AVLTree
             return;
         }
 
+        
+        Vertex curr = this.root;
 
+        while (true) {
+            if (newVertex.getData() > curr.getData() && curr.getRight() != null) curr = curr.getRight();
+
+            else if (newVertex.getData() > curr.getData() && curr.getRight() == null) {curr.setRight(newVertex); break;}
+
+            else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) curr = curr.getLeft();
+
+            else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {curr.setLeft(newVertex); break;}
+        }
+
+        this.size++;
+        Vertex z = findUnbalanced(newVertex);
+        
+        if (z != null) {
+            
+
+
+
+        }
 
     }
+
+    private Vertex findUnbalanced(Vertex vert) {
+        
+        Vertex unbalanced = null;
+
+        while (vert.getParent() != null) {
+            
+
+            if (vert.isLeftSubtree()) {
+                
+                vert = vert.getParent();
+                vert.incrementLeftDescendents();
+                
+                if (!vert.VerifyAVL()) return vert;
+
+            }
+
+            else {
+
+                vert = vert.getParent();
+                vert.incrementRightDescendents();
+                
+                if (!vert.VerifyAVL()) return vert;
+            }
+        }//End while
+
+        return vert;
+    
+    }
+
 }
