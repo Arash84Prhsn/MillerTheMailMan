@@ -68,8 +68,8 @@ private class Vertex {
             return this.parent.getRight() == this;
         }
 
-        public void incrementLeftDescendents(){leftDecendents++;}
-        public void incrementRightDescendents(){rightDecendents++;}
+        public void incrementLeftDescendents(){this.leftDecendents++;}
+        public void incrementRightDescendents(){this.rightDecendents++;}
 
         public boolean VerifyAVL(){
             int dif = Math.abs(leftDecendents - rightDecendents);
@@ -132,14 +132,14 @@ private class Vertex {
             t1.setParent(y.getLeft());
     }
 
-    private void leftRightRotation(Vertex z) {
-        leftRotation(z);
-        rightRotation(z);
+    private void leftRightRotation(Vertex x) {
+        leftRotation(x);
+        rightRotation(x);
     }
 
-    private void rightLeftRotaion(Vertex z) {
-        rightRotation(z);
-        leftRotation(z);
+    private void rightLeftRotaion(Vertex x) {
+        rightRotation(x);
+        leftRotation(x);
     }
     //End of rotation methods.
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -160,60 +160,83 @@ private class Vertex {
         Vertex curr = this.root;
 
         while (true) {
-            if (newVertex.getData() > curr.getData() && curr.getRight() != null) curr = curr.getRight();
+
+                 if (newVertex.getData() > curr.getData() && curr.getRight() != null) curr = curr.getRight();
 
             else if (newVertex.getData() > curr.getData() && curr.getRight() == null) {curr.setRight(newVertex); break;}
 
             else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) curr = curr.getLeft();
 
             else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {curr.setLeft(newVertex); break;}
-        }
+        }//End while.
 
         this.size++;
-        Vertex[] zyx = findUnbalanced(newVertex);
-        // TODO: Finish insert() in the case that the tree was unbalanced.
-        if (zyx[0] != null) {
+        
+        if (this.getSize() > 3) {
+        
+            Vertex[] zyx = findUnbalanced(newVertex);
+            Vertex z = zyx[0];
+            Vertex y = zyx[1];
+            Vertex x = zyx[2];
             
+            if (zyx[0] != null) {
+                
+                if (y.isLeftSubtree() && x.isLeftSubtree()) {
+                    this.rightRotation(y);
+                    return;
+                }
 
+                if (y.isRightSubtree() && x.isRightSubtree()) {
+                    this.leftRotation(y);
+                    return;
+                }
 
+                if (y.isLeftSubtree() && x.isRightSubtree()) {
+                    this.leftRightRotation(x);
+                    return;
+                }
+
+                if (y.isRightSubtree() && x.isLeftSubtree()) {
+                    this.rightLeftRotaion(x);
+                    return;
+                }
+            }// End inner if
+        }// End if
+    }// End insert();
+    
+    // A helper method to find the unbalanced Vertex.
+    // TODO: Make sure that the count of left and right subtrees are incremented as you climb the tree.
+    private Vertex[] findUnbalanced(Vertex x) {
+        
+        Vertex[] zyx = new Vertex[3];
+        
+        zyx[2] = x;
+        
+        Vertex y = x.getParent();
+        Vertex z = y.getParent();
+
+        while (z!=null) {
+            
+            if (!z.VerifyAVL()) return zyx;
+            
+            x = y;
+            y = z;
+            z = z.getParent();
+
+            zyx[0] = z; zyx[1] = y; zyx[2] = x;
+
+            continue;
 
         }
-
-    }
-    //TODO: Finish this function
-    private Vertex[] findUnbalanced(Vertex vert) {
-        
-        Vertex[] xyz = new Vertex[3];
-        
-        Vertex unbalanced = null;
-
-        while (vert.getParent() != null) {
-            
-
-            if (vert.isLeftSubtree()) {
-                
-                vert = vert.getParent();
-                vert.incrementLeftDescendents();
-                
-                if (!vert.VerifyAVL()) {
-
-                }
-
-            }
-
-            else {
-
-                vert = vert.getParent();
-                vert.incrementRightDescendents();
-                
-                if (!vert.VerifyAVL()) {
-
-                }
-            }
-        }//End while
-
-        return xyz;
-    
+        return zyx;
     }
 
-}
+    public int remove(int key) {
+
+
+        return -1;
+    }
+
+
+
+}//End of AVL tree class
