@@ -184,33 +184,9 @@ private class Vertex {
         if (this.getSize() >= 3) {
         
             Vertex[] zyx = findUnbalanced(newVertex, "insert");
-            Vertex z = zyx[0];
-            Vertex y = zyx[1];
-            Vertex x = zyx[2];
-            
-            if (z != null) {
+            if (zyx[0] != null) this.fixTree(zyx);
+        }
                 
-                if (y.isLeftSubtree() && x.isLeftSubtree()) {
-                    this.rightRotation(y);
-                    return;
-                }
-
-                if (y.isRightSubtree() && x.isRightSubtree()) {
-                    this.leftRotation(y);
-                    return;
-                }
-
-                if (y.isLeftSubtree() && x.isRightSubtree()) {
-                    this.leftRightRotation(x);
-                    return;
-                }
-
-                if (y.isRightSubtree() && x.isLeftSubtree()) {
-                    this.rightLeftRotaion(x);
-                    return;
-                }
-            }// End inner if
-        }// End if
     }// End insert();
     
     // A helper method to find the unbalanced Vertex.
@@ -348,15 +324,33 @@ private class Vertex {
 
         Vertex[] zyx = this.findUnbalanced(parentOfRemoved, "removed" + position);
 
-        if (zyx[0] != null) {
+        if (zyx[0] != null) this.fixTree(zyx);
             
-        }
-
-
-
         return data;
     }
 
+    private void fixTree(Vertex[] zyx) {
+        Vertex y = zyx[1];
+        Vertex x = zyx[2];
+        if (y.isLeftSubtree() && x.isLeftSubtree()) {
+            this.rightRotation(y);
+            return;
+        }
 
+        if (y.isRightSubtree() && x.isRightSubtree()) {
+            this.leftRotation(y);
+            return;
+        }
+
+        if (y.isLeftSubtree() && x.isRightSubtree()) {
+            this.leftRightRotation(x);
+            return;
+        }
+
+        if (y.isRightSubtree() && x.isLeftSubtree()) {
+            this.rightLeftRotaion(x);
+            return;
+        }
+    }
 
 }// End of AVL tree class
