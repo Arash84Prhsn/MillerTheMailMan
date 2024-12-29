@@ -8,8 +8,8 @@ private class Vertex {
         private Vertex right = null;
         private Vertex parent = null;
         
-        int rightDecendants = 0;
-        int leftDecendants = 0;
+        int rightDescendants = 0;
+        int leftDescendants = 0;
         
         // Vertex constructors:
         public Vertex(int data, Vertex left, Vertex right) {
@@ -44,6 +44,16 @@ private class Vertex {
         public Vertex getParent() {
             return this.parent;
         }
+        public int getRightDescendants() {
+            return this.rightDescendants;
+        }
+        public int getLeftDescendants() {
+            return this.leftDescendants;
+        }
+
+        public int getHeight() {// Returns the maximum of left Vertexes and right Vertexex of this Vertex.
+            return Math.max(this.leftDescendants, this.rightDescendants);
+        }
 
         // Vertex setter methods:
         public void setData(int data) {this.data = data;}
@@ -68,17 +78,15 @@ private class Vertex {
             return this.parent.getRight() == this;
         }
 
-        public void incrementLeftDescendants(){this.leftDecendants++;}
-        public void incrementRightDescendants(){this.rightDecendants++;}
-        public void decrementLeftDescendant(){this.leftDecendants--;}
-        public void decrementRightDescendant(){this.rightDecendants--;}
+        public void incrementLeftDescendants() {this.leftDescendants++;}
+        public void decrementLeftDescendants() {this.leftDescendants--;}
+        public void incrementRightDescendants(){this.rightDescendants++;}
+        public void decrementRightDescendants(){this.rightDescendants--;}
     
-        public boolean VerifyAVL(){
-            int dif = Math.abs(leftDecendants - rightDecendants);
-            if (dif > 1) return false;
+        public boolean VerifyAVL(){// Checks to see if the AVL property is preserved or not.
+            if (Math.abs(leftDescendants - rightDescendants) > 1) return false;
             return true;
         }
-
 
     }//End of Vertex class.
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -239,24 +247,28 @@ private class Vertex {
             }// End while.
         }// End if.
 
-        // TODO:Finish this piece of absolute garbage.
-        else if (func.equals("removedLeft")) {
-
-            Vertex y = x.getParent();
-            Vertex z = y.getParent();
+        else { 
             
-            x.decrementLeftDescendant();
+            if (func.equals("removedLeft")) x.decrementLeftDescendants();
+            else x.decrementRightDescendants();
 
-            if (x.isLeftSubtree()) y.decrementLeftDescendant();
-            else if (x.isRightSubtree()) y.decrementRightDescendant();
-
-            if (y.isLeftSubtree()) z.decrementLeftDescendant();
-            else if (y.isRightSubtree()) z.decrementRightDescendant();
-
-
+            Vertex unbalanced = x;
             
+            while (unbalanced.getParent() != null) {
+                
+                if (unbalanced.isLeftSubtree()) unbalanced.getParent().decrementLeftDescendants();
+                else if (unbalanced.isRightSubtree()) unbalanced.getParent().decrementRightDescendants();
 
-        }
+                unbalanced = unbalanced.getParent();
+            
+                if (!unbalanced.VerifyAVL()) {
+                    zyx[0] = unbalanced;
+                    zyx[1] = unbalanced.getRightDescendants() > unbalanced.getLeftDescendants() ? unbalanced.getRight() : unbalanced.getLeft();
+                    zyx[2] = zyx[1].getRightDescendants() > zyx[1].getLeftDescendants() ? zyx[1].getRight() : zyx[1].getLeft();
+                    break;
+                }
+            }// End while.
+        }// End else.
 
         return zyx;
     }// End findUnbalanced().
@@ -275,7 +287,7 @@ private class Vertex {
         return null;
     }
 
-    // Helper method that removes that nulls a certain vertex and removes refrence to the vertex from it's parent.
+    // Helper method that nulls a certain vertex and removes refrence to the vertex from it's parent.
     // !!!This method does not decrement the size of the tree.
     private int nullVertex(Vertex v) {
 
@@ -304,9 +316,11 @@ private class Vertex {
         size--; // Since the removedVertex is not null we will decrement size as we now know for sure that a Vertex is getting removed.
 
         Vertex parentOfRemoved = null;
+        String position = "";
 
         if (removedVertex.getLeft() == null && removedVertex.getRight() == null) {
             parentOfRemoved = removedVertex.getParent();
+            position = removedVertex.isLeftSubtree() ? "left" : "right";
             this.nullVertex(removedVertex);
         }
 
@@ -316,6 +330,7 @@ private class Vertex {
                 replacement = replacement.getLeft();
             }
             parentOfRemoved = replacement.getParent();
+            position = replacement.isLeftSubtree() ? "left" : "right";
             removedVertex.setData(replacement.getData());
             this.nullVertex(replacement);
         }
@@ -326,11 +341,17 @@ private class Vertex {
                 replacement = replacement.getRight();
             }
             parentOfRemoved = replacement.getParent();
+            position = replacement.isLeftSubtree() ? "left" : "right";
             removedVertex.setData(replacement.getData());
             this.nullVertex(replacement);
         }
 
-        findUnbalanced(parentOfRemoved, "remove");
+        Vertex[] zyx = this.findUnbalanced(parentOfRemoved, "removed" + position);
+
+        if (zyx[0] != null) {
+            
+        }
+
 
 
         return data;
