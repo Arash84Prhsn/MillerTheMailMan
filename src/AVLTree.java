@@ -8,8 +8,8 @@ private class Vertex {
         private Vertex right = null;
         private Vertex parent = null;
         
-        int rightDecendents = 0;
-        int leftDecendents = 0;
+        int rightDecendants = 0;
+        int leftDecendants = 0;
         
         // Vertex constructors:
         public Vertex(int data, Vertex left, Vertex right) {
@@ -68,11 +68,13 @@ private class Vertex {
             return this.parent.getRight() == this;
         }
 
-        public void incrementLeftDescendents(){this.leftDecendents++;}
-        public void incrementRightDescendents(){this.rightDecendents++;}
-
+        public void incrementLeftDescendants(){this.leftDecendants++;}
+        public void incrementRightDescendants(){this.rightDecendants++;}
+        public void decrementLeftDescendant(){this.leftDecendants--;}
+        public void decrementRightDescendant(){this.rightDecendants--;}
+    
         public boolean VerifyAVL(){
-            int dif = Math.abs(leftDecendents - rightDecendents);
+            int dif = Math.abs(leftDecendants - rightDecendants);
             if (dif > 1) return false;
             return true;
         }
@@ -152,11 +154,10 @@ private class Vertex {
 
         if (this.isEmpty()) {
             this.setRoot(newVertex);
-            size++;
+            this.size++;
             return;
         }
 
-        
         Vertex curr = this.root;
 
         while (true) {
@@ -172,14 +173,14 @@ private class Vertex {
 
         this.size++;
         
-        if (this.getSize() > 3) {
+        if (this.getSize() >= 3) {
         
             Vertex[] zyx = findUnbalanced(newVertex, "insert");
             Vertex z = zyx[0];
             Vertex y = zyx[1];
             Vertex x = zyx[2];
             
-            if (zyx[0] != null) {
+            if (z != null) {
                 
                 if (y.isLeftSubtree() && x.isLeftSubtree()) {
                     this.rightRotation(y);
@@ -215,11 +216,11 @@ private class Vertex {
             Vertex y = x.getParent();
             Vertex z = y.getParent();
 
-            if (x.isLeftSubtree()) y.incrementLeftDescendents();
-            else if (x.isRightSubtree()) y.incrementRightDescendents();
+            if (x.isLeftSubtree()) y.incrementLeftDescendants();
+            else if (x.isRightSubtree()) y.incrementRightDescendants();
 
-            if (y.isLeftSubtree()) z.incrementLeftDescendents();
-            else if (y.isRightSubtree()) z.incrementRightDescendents();
+            if (y.isLeftSubtree()) z.incrementLeftDescendants();
+            else if (y.isRightSubtree()) z.incrementRightDescendants();
 
             while (z!=null) {
                 
@@ -229,18 +230,33 @@ private class Vertex {
                 y = z;
                 z = z.getParent();
                 
-                if (y.isLeftSubtree() && z!=null) z.incrementLeftDescendents();
-                else if (y.isRightSubtree() && z!= null) z.incrementRightDescendents();
+                if (y.isLeftSubtree() && z!=null) z.incrementLeftDescendants();
+                else if (y.isRightSubtree() && z!= null) z.incrementRightDescendants();
             
                 zyx[0] = z; zyx[1] = y; zyx[2] = x;
 
                 continue;
-            }
+            }// End while.
+        }// End if.
+
+        else if (func.equals("removedLeft")) {
+
+            Vertex y = x.getParent();
+            Vertex z = y.getParent();
+            
+            x.decrementLeftDescendant();
+
+            if (x.isLeftSubtree()) y.decrementLeftDescendant();
+            else if (x.isRightSubtree()) y.decrementRightDescendant();
+
+            if (y.isLeftSubtree()) z.decrementLeftDescendant();
+            else if (y.isRightSubtree()) z.decrementRightDescendant();
+            
+
         }
 
-
         return zyx;
-    }
+    }// End findUnbalanced().
 
     // Helper method that searches the tree and returns the vertex of the given arguement. returns null if data does not exist in tree.
     private Vertex find(int data) {
@@ -284,9 +300,11 @@ private class Vertex {
         if (removedVertex == null) return -1;
         size--; // Since the removedVertex is not null we will decrement size as we now know for sure that a Vertex is getting removed.
 
+        Vertex parentOfRemoved = null;
+
         if (removedVertex.getLeft() == null && removedVertex.getRight() == null) {
+            parentOfRemoved = removedVertex.getParent();
             this.nullVertex(removedVertex);
-            Vertex replacement = removedVertex;
         }
 
         else if (removedVertex.hasRight()) {
@@ -294,6 +312,7 @@ private class Vertex {
             while (replacement.hasLeft()) {
                 replacement = replacement.getLeft();
             }
+            parentOfRemoved = replacement.getParent();
             removedVertex.setData(replacement.getData());
             this.nullVertex(replacement);
         }
@@ -303,9 +322,12 @@ private class Vertex {
             while (replacement.hasRight()) {
                 replacement = replacement.getRight();
             }
+            parentOfRemoved = replacement.getParent();
             removedVertex.setData(replacement.getData());
             this.nullVertex(replacement);
         }
+
+        findUnbalanced(parentOfRemoved, "remove");
 
 
         return data;
