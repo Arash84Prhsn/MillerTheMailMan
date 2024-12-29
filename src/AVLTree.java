@@ -11,7 +11,7 @@ private class Vertex {
         int rightDecendents = 0;
         int leftDecendents = 0;
         
-        //Vertex constructors:
+        // Vertex constructors:
         public Vertex(int data, Vertex left, Vertex right) {
             this.data = data;
             this.left = left;
@@ -31,7 +31,7 @@ private class Vertex {
 
         public Vertex(){this.data = -1;}
 
-        //Vertex getter methods:
+        // Vertex getter methods:
         public int getData() {
             return this.data;
         }
@@ -45,13 +45,13 @@ private class Vertex {
             return this.parent;
         }
 
-        //Vertex setter methods:
+        // Vertex setter methods:
         public void setData(int data) {this.data = data;}
         public void setLeft(Vertex left) {this.left = left;}
         public void setRight(Vertex right) {this.right = right;}
         public void setParent(Vertex parent) {this.parent = parent;}
 
-        //Additional Vertex methods:
+        // Additional Vertex methods:
         public boolean hasLeft() {
             return this.left!=null;
         }
@@ -84,17 +84,17 @@ private class Vertex {
     Vertex root;
     int size = 0;
 
-    //getter methods:
+    // getter methods:
     public Vertex getRoot() {return this.root;}
     public int getSize() {return this.size;}
     public int getRootData() {return this.root.getData();}
 
-    //Setter methods:
+    // Setter methods:
     public void setRoot(Vertex root) {this.root = root;}
     public void setSize(int size) {this.size = size;}
     public void setRootData(int data) {this.getRoot().setData(data);}
 //-------------------------------------------------------------------------------------------------------------------------------------------
-    //AVL tree rotation methods:
+    // AVL tree rotation methods:
     private void leftRotation(Vertex y) {
         Vertex t1 = y.getParent().getLeft();
         Vertex t2 = y.getLeft();
@@ -141,7 +141,7 @@ private class Vertex {
         rightRotation(x);
         leftRotation(x);
     }
-    //End of rotation methods.
+    // End of rotation methods.
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
     public boolean isEmpty() {return this.size == 0;}
@@ -168,7 +168,7 @@ private class Vertex {
             else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) curr = curr.getLeft();
 
             else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {curr.setLeft(newVertex); break;}
-        }//End while.
+        }// End while.
 
         this.size++;
         
@@ -205,7 +205,6 @@ private class Vertex {
     }// End insert();
     
     // A helper method to find the unbalanced Vertex.
-    // TODO: Make sure that the count of left and right subtrees are incremented as you climb the tree.
     private Vertex[] findUnbalanced(Vertex x) {
         
         Vertex[] zyx = new Vertex[3];
@@ -215,14 +214,23 @@ private class Vertex {
         Vertex y = x.getParent();
         Vertex z = y.getParent();
 
+        if (x.isLeftSubtree()) y.incrementLeftDescendents();
+        else if (x.isRightSubtree()) y.incrementRightDescendents();
+
+        if (y.isLeftSubtree()) z.incrementLeftDescendents();
+        else if (y.isRightSubtree()) z.incrementRightDescendents();
+
         while (z!=null) {
             
             if (!z.VerifyAVL()) return zyx;
-            
+
             x = y;
             y = z;
             z = z.getParent();
-
+            
+            if (y.isLeftSubtree() && z!=null) z.incrementLeftDescendents();
+            else if (y.isRightSubtree() && z!= null) z.incrementRightDescendents();
+        
             zyx[0] = z; zyx[1] = y; zyx[2] = x;
 
             continue;
@@ -231,12 +239,32 @@ private class Vertex {
         return zyx;
     }
 
-    public int remove(int key) {
+    // Helper method that searches the tree and returns the vertex of the given arguement. returns null if data does not exist in tree.
+    private Vertex find(int data) {
 
+        Vertex curr = this.getRoot();
+
+        while (curr != null) {
+            if (curr.getData() == data) return curr;
+            if (curr.getData() > data) curr = curr.getLeft();
+            if (curr.getData() < data) curr = curr.getRight();
+        }
+
+        return null;
+    }
+
+
+    public int remove(int data) {
+        
+        Vertex removedVertex = this.find(data);
+
+        if (removedVertex == null) return -1;
+
+        
 
         return -1;
     }
 
 
 
-}//End of AVL tree class
+}// End of AVL tree class
