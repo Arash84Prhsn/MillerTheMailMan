@@ -174,7 +174,7 @@ private class Vertex {
         
         if (this.getSize() > 3) {
         
-            Vertex[] zyx = findUnbalanced(newVertex);
+            Vertex[] zyx = findUnbalanced(newVertex, "insert");
             Vertex z = zyx[0];
             Vertex y = zyx[1];
             Vertex x = zyx[2];
@@ -205,37 +205,40 @@ private class Vertex {
     }// End insert();
     
     // A helper method to find the unbalanced Vertex.
-    private Vertex[] findUnbalanced(Vertex x) {
+    private Vertex[] findUnbalanced(Vertex x, String func) {
         
         Vertex[] zyx = new Vertex[3];
         
-        zyx[2] = x;
-        
-        Vertex y = x.getParent();
-        Vertex z = y.getParent();
-
-        if (x.isLeftSubtree()) y.incrementLeftDescendents();
-        else if (x.isRightSubtree()) y.incrementRightDescendents();
-
-        if (y.isLeftSubtree()) z.incrementLeftDescendents();
-        else if (y.isRightSubtree()) z.incrementRightDescendents();
-
-        while (z!=null) {
+        if (func.equals("insert")) {
+            zyx[2] = x;
             
-            if (!z.VerifyAVL()) return zyx;
+            Vertex y = x.getParent();
+            Vertex z = y.getParent();
 
-            x = y;
-            y = z;
-            z = z.getParent();
+            if (x.isLeftSubtree()) y.incrementLeftDescendents();
+            else if (x.isRightSubtree()) y.incrementRightDescendents();
+
+            if (y.isLeftSubtree()) z.incrementLeftDescendents();
+            else if (y.isRightSubtree()) z.incrementRightDescendents();
+
+            while (z!=null) {
+                
+                if (!z.VerifyAVL()) return zyx;
+
+                x = y;
+                y = z;
+                z = z.getParent();
+                
+                if (y.isLeftSubtree() && z!=null) z.incrementLeftDescendents();
+                else if (y.isRightSubtree() && z!= null) z.incrementRightDescendents();
             
-            if (y.isLeftSubtree() && z!=null) z.incrementLeftDescendents();
-            else if (y.isRightSubtree() && z!= null) z.incrementRightDescendents();
-        
-            zyx[0] = z; zyx[1] = y; zyx[2] = x;
+                zyx[0] = z; zyx[1] = y; zyx[2] = x;
 
-            continue;
-
+                continue;
+            }
         }
+
+
         return zyx;
     }
 
@@ -253,16 +256,59 @@ private class Vertex {
         return null;
     }
 
+    // Helper method that removes that nulls a certain vertex and removes refrence to the vertex from it's parent.
+    // !!!This method does not decrement the size of the tree.
+    private int nullVertex(Vertex v) {
+
+        int data = v.getData();
+
+        if (v.getParent() == null) {
+            return data;
+        }
+
+        if (v.isLeftSubtree()) {
+            v.getParent().setLeft(null);
+        }
+
+        if (v.isRightSubtree()) {
+            v.getParent().setRight(null);
+        }
+
+        return data;
+    }
 
     public int remove(int data) {
         
         Vertex removedVertex = this.find(data);
 
         if (removedVertex == null) return -1;
+        size--; // Since the removedVertex is not null we will decrement size as we now know for sure that a Vertex is getting removed.
 
-        
+        if (removedVertex.getLeft() == null && removedVertex.getRight() == null) {
+            this.nullVertex(removedVertex);
+            Vertex replacement = removedVertex;
+        }
 
-        return -1;
+        else if (removedVertex.hasRight()) {
+            Vertex replacement = removedVertex.getRight();
+            while (replacement.hasLeft()) {
+                replacement = replacement.getLeft();
+            }
+            removedVertex.setData(replacement.getData());
+            this.nullVertex(replacement);
+        }
+
+        else if (removedVertex.hasLeft()) {
+            Vertex replacement = removedVertex.getLeft();
+            while (replacement.hasRight()) {
+                replacement = replacement.getRight();
+            }
+            removedVertex.setData(replacement.getData());
+            this.nullVertex(replacement);
+        }
+
+
+        return data;
     }
 
 
