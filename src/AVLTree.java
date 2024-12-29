@@ -239,6 +239,7 @@ private class Vertex {
             }// End while.
         }// End if.
 
+        // TODO:Finish this piece of absolute garbage.
         else if (func.equals("removedLeft")) {
 
             Vertex y = x.getParent();
@@ -251,6 +252,8 @@ private class Vertex {
 
             if (y.isLeftSubtree()) z.decrementLeftDescendant();
             else if (y.isRightSubtree()) z.decrementRightDescendant();
+
+
             
 
         }
