@@ -170,13 +170,21 @@ private class Vertex {
 
         while (true) {
 
-                 if (newVertex.getData() > curr.getData() && curr.getRight() != null) curr = curr.getRight();
+            if (newVertex.getData() > curr.getData() && curr.getRight() != null) curr = curr.getRight();
 
-            else if (newVertex.getData() > curr.getData() && curr.getRight() == null) {curr.setRight(newVertex); break;}
+            else if (newVertex.getData() > curr.getData() && curr.getRight() == null) {
+                curr.setRight(newVertex); 
+                newVertex.setParent(curr);
+                break;
+            }
 
             else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) curr = curr.getLeft();
 
-            else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {curr.setLeft(newVertex); break;}
+            else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {
+                curr.setLeft(newVertex); 
+                newVertex.setParent(curr);
+                break;
+            }
         }// End while.
 
         this.size++;
