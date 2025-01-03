@@ -1,3 +1,4 @@
+// Phase3:
 public class EmployeeTree {
 
 // Private Vertex class.---------------------------------------------------------- 
@@ -52,6 +53,7 @@ public class EmployeeTree {
         for (int i = 1; i < newInsert.length; i++)
             childern[i-1] = newInsert[i];
 
+        // In the case that the tree is empty just add the new items normally.
         if (this.isEmpty()) {
             
             Vertex newRoot = new Vertex(newInsert[0]);
@@ -69,7 +71,9 @@ public class EmployeeTree {
             return;
         }
 
-        
+        // If the tree is not empty, Go through the tree in an breadth first manner find the parent and then add the children.
+        Queue<Vertex> queue = new Queue();
+
 
 
     }

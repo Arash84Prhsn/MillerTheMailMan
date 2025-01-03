@@ -1,3 +1,4 @@
+// Queue class to assist in Phase2:
 public class Queue<T> {
 
     private class Node<T> {
