@@ -191,9 +191,10 @@ private class Vertex {
         this.size++;
         
         if (this.getSize() >= 3) {
-        
             Vertex[] zyx = findUnbalanced(newVertex, "insert");
-            if (zyx[0] != null) this.fixTree(zyx);
+            if (zyx[0] != null) {
+                this.fixTree(zyx);
+            }
         }
                 
     }// End insert();
@@ -249,7 +250,23 @@ private class Vertex {
                 if (!unbalanced.VerifyAVL()) {
                     zyx[0] = unbalanced;
                     zyx[1] = unbalanced.getRightDescendants() > unbalanced.getLeftDescendants() ? unbalanced.getRight() : unbalanced.getLeft();
-                    zyx[2] = zyx[1].getRightDescendants() > zyx[1].getLeftDescendants() ? zyx[1].getRight() : zyx[1].getLeft();
+                    
+                    if (zyx[1].getRightDescendants() > zyx[1].getLeftDescendants()) {
+                        zyx[2] = zyx[1].getRight();
+                    }
+                    
+                    else if (zyx[1].getRightDescendants() < zyx[1].leftDescendants) {
+                        zyx[2] = zyx[1].getLeft();
+                    }
+                    // The height of the left and right subtrees of y are equal therefore:
+                    else if (zyx[1].isLeftSubtree()) {
+                        zyx[2] = zyx[1].getLeft();
+                    }
+
+                    else {
+                        zyx[2] = zyx[1].getRight();
+                    }
+
                     break;
                 }
             }// End while.

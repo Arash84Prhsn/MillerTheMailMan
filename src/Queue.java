@@ -1,4 +1,4 @@
-// Queue class to assist in Phase2:
+// Queue class to assist in Phase3:
 public class Queue<T> {
 
     private class Node<T> {
@@ -25,6 +25,7 @@ public class Queue<T> {
 
     public Queue(){}
 
+    public int getSize() {return this.size;}
     public boolean isEmpty() {return size==0;}
 
     public T peek() {

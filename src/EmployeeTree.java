@@ -1,34 +1,57 @@
 // Phase3:
+
+import java.util.ArrayList;
+
 public class EmployeeTree {
 
-// Private Vertex class.---------------------------------------------------------- 
+// Private Vertex class.----------------------------------------------------------
     private class Vertex {
 
         // Vertex attributes:
         String data = "";
-        Vertex[] children = null;
+        ArrayList<Vertex> children = null;
         Vertex parent = null;
 
         // Vertex constructors:
         public Vertex(){}
-        public Vertex(String data) {this.data = data;}
-        public Vertex(String data, Vertex parent) {this.data = data; this.parent = parent;}
-        public Vertex(String data, Vertex[] children, Vertex parent) {
+        public Vertex(String data) {
+            this.data = data;
+        }
+        public Vertex(String data, Vertex parent) {
+            this.data = data;
+            this.parent = parent;
+        }
+        public Vertex(String data, ArrayList<Vertex> children, Vertex parent) {
             this.data = data;
             this.children = children;
             this.parent = parent;
-        }
+        }       
 
         // Getter methods:
         public String getData() {return data;}
-        public Vertex[] getChildren() {return children;}
+        public ArrayList<Vertex> getChildren() {return children;}
         public Vertex getParent() {return parent;}
 
         // Setter methods:
         public void setData(String data) {this.data = data;}
-        public void setChildren(Vertex[] children) {this.children = children;}
+        public void setChildren(ArrayList<Vertex> children) {this.children = children;}
         public void setParent(Vertex parent) {this.parent = parent;}
 
+        public void addChild (String newChild) {
+            this.children.add(new Vertex(newChild, this));
+        }
+
+        public void addToChildren(ArrayList<Vertex> newChildren) {
+            for (Vertex v : newChildren) {
+                this.getChildren().add(v);
+            }
+        }
+        
+        public void addToChildren(String[] newChildren) {
+            for (String s : newChildren) {
+                this.getChildren().add(new Vertex(s, this));
+            }
+        }
     }
 // End of Vertex class.------------------------------------------------------------
 
@@ -43,43 +66,67 @@ public class EmployeeTree {
 
     public void setRoot(Vertex newRoot) {this.root = newRoot;}
 
-
     public boolean isEmpty() {return size==0;}
     
-    public void insert(String[] newInsert) {
+    public void insert(String[] newInsert) throws IllegalArgumentException {
 
-        String[] childern = new String[newInsert.length-1];
-
-        for (int i = 1; i < newInsert.length; i++)
-            childern[i-1] = newInsert[i];
-
-        // In the case that the tree is empty just add the new items normally.
         if (this.isEmpty()) {
-            
-            Vertex newRoot = new Vertex(newInsert[0]);
-            
-            Vertex[] childrenVertexes = new Vertex[childern.length];
-
-            for (int j = 0; j < childern.length; j++) {
-                childrenVertexes[j] = new Vertex(childern[j], newRoot);
-                size++;
-            }
-
-            newRoot.setChildren(childrenVertexes);
-            this.setRoot(newRoot);
+            this.root = new Vertex(newInsert[0]);
             size++;
-            return;
+        }
+        
+        String parentName = newInsert[0];
+
+        // Search the tree for the parent and then add the children.
+        // BFS search:
+        Vertex parentVertex = bfs(parentName);
+        
+        if (parentVertex == null) {
+            throw new IllegalArgumentException("Invalid input. Parent does not exist in tree");
         }
 
-        // If the tree is not empty, Go through the tree in an breadth first manner find the parent and then add the children.
-        Queue<Vertex> queue = new Queue();
+        for (int i = 1; i < newInsert.length; i++) {
+            parentVertex.addChild(newInsert[i]);
+            size++;
+        }
+    }// End of insert.
+
+    public Vertex remove(String removedItem) throws IllegalArgumentException {
+
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException("No items to remove");
+        }
+
+        
 
 
-
+        return null;
     }
 
 
+    private static Vertex bfs(String item) {
+
+        if (this.isEmpty()) return null;
+        
+        Queue<Vertex> queue = new Queue<>();
+        queue.enqueue(this.getRootVertex());
+
+        while (!queue.isEmpty()) {
+            Vertex current = queue.dequeue();
+            
+            if (current.getData().equals(item)) {
+                return current;
+            }
+            
+            for (Vertex v : current.getChildren()) {
+                queue.enqueue(v);
+            }
+
+        }
+
+        return null;
+    }
 
 
-}
+}// End of EmployeeTree class.
 
