@@ -52,6 +52,10 @@ public class EmployeeTree {
                 this.getChildren().add(new Vertex(s, this));
             }
         }
+
+        public boolean equals(Vertex vertex) {
+            return this.data == vertex.data;
+        }
     }
 // End of Vertex class.------------------------------------------------------------
 
@@ -79,7 +83,7 @@ public class EmployeeTree {
 
         // Search the tree for the parent and then add the children.
         // BFS search:
-        Vertex parentVertex = bfs(parentName);
+        Vertex parentVertex = this.bfs(parentName);
         
         if (parentVertex == null) {
             throw new IllegalArgumentException("Invalid input. Parent does not exist in tree");
@@ -91,20 +95,30 @@ public class EmployeeTree {
         }
     }// End of insert.
 
-    public Vertex remove(String removedItem) throws IllegalArgumentException {
+    public void remove(String removedItem) throws IllegalArgumentException {
 
         if (this.isEmpty()) {
-            throw new IllegalArgumentException("No items to remove");
+            throw new IllegalArgumentException("Tree is empty. No items to remove");
         }
 
+        // In the case that we are removing the root:
+        if (removedItem.equals(this.getRootData())) {
+            this.size = 0;
+            this.root = null;
+            return ;
+        }
         
+        Vertex removedVertex = bfs(removedItem);
+        if (removedVertex == null) {
+            throw new IllegalArgumentException("Item does not exist in tree");
+        }
 
-
-        return null;
+        Vertex parentVertex = removedVertex.getParent();
+        parentVertex.getChildren().remove(removedVertex);
+        size--;
     }
-
-
-    private static Vertex bfs(String item) {
+    
+    private Vertex bfs(String item) {
 
         if (this.isEmpty()) return null;
         
