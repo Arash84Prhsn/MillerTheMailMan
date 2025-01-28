@@ -118,7 +118,7 @@ public class EmployeeTree {
         size--;
     }
     
-    private Vertex bfs(String item) {
+    public Vertex bfs(String item) {
 
         if (this.isEmpty()) return null;
         
@@ -139,6 +139,58 @@ public class EmployeeTree {
         }
 
         return null;
+    }
+
+    // Searches the tree for the given item and returns an arrayList containing the data of the children.
+    public ArrayList<String> bfsChildren(String item) throws IllegalArgumentException{
+
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException("Tree is empty.");
+        }
+        ArrayList<String> children = new ArrayList<>();
+        Queue<Vertex> queue = new Queue<>();
+        queue.enqueue(this.getRootVertex());
+
+        while (!queue.isEmpty()) {
+            Vertex current = queue.dequeue();
+            
+            if (current.getData().equals(item)) {
+                for (Vertex e : current.getChildren()) {
+                    children.add(e.getData());
+                }
+                return children;
+            }
+            
+            for (Vertex v : current.getChildren()) {
+                queue.enqueue(v);
+            }
+
+        }
+        // In case the employee was not found.
+        throw new IllegalArgumentException("Employee does not exist in company.");
+    }
+
+    // levelOrder traversal of the tree.
+    public ArrayList<String> levelOrderTraversal() {
+
+        if (this.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<String> employees = new ArrayList<>();
+        Queue<Vertex> queue = new Queue<>();
+
+        queue.enqueue(this.getRootVertex());
+
+        while (!queue.isEmpty()) {
+            Vertex curr = queue.dequeue();
+            employees.add(curr.getData());
+            for (Vertex v : curr.getChildren()) {
+                queue.enqueue(v);
+            }
+        }
+
+        return employees;
     }
 
 

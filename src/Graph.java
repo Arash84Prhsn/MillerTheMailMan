@@ -7,7 +7,11 @@ public class Graph {
         this.adjacencyMatrix = adjacencyMatrix;
     }
 
-                
+    public Graph() {
+        this(new int[100][100]);
+    }
+    
+    
 
 
 }
