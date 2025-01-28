@@ -1,4 +1,7 @@
 // Phase1:
+
+import java.util.ArrayList;
+
 public class AVLTree
 {
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -20,9 +23,7 @@ private class Vertex {
         }
         
         public Vertex(int data, Vertex left, Vertex right, Vertex parent) {
-            this.data = data;
-            this.left = left;
-            this.right = right;
+            this(data, left, right);
             this.parent = parent;
         }
 
@@ -30,7 +31,9 @@ private class Vertex {
             this.data = data;
         }
 
-        public Vertex(){this.data = -1;}
+        public Vertex() {
+            this.data = -1;
+        }
 
         // Vertex getter methods:
         public int getData() {
@@ -377,6 +380,33 @@ private class Vertex {
             this.rightLeftRotaion(x);
             return;
         }
+    }
+
+    // Returns an ArrayList containing all data in tree through levelOrder traversal of vertices.
+    public ArrayList<Integer> levelOrder() {
+
+        if (this.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Integer> data = new ArrayList<>();
+        Queue<Vertex> queue = new Queue<>();
+
+        queue.enqueue(this.getRoot());
+
+        while (!queue.isEmpty()) {
+            Vertex current = queue.dequeue();
+            data.add(current.getData());
+
+            if (current.hasLeft()) {
+                queue.enqueue(current.getLeft());
+            }
+            if (current.hasRight()) {
+                queue.enqueue(current.getRight());
+            }
+        }
+
+        return data;
     }
 
 }// End of AVL tree class
