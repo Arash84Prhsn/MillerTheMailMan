@@ -10,10 +10,6 @@ private class Vertex {
         private Vertex left = null;
         private Vertex right = null;
         private Vertex parent = null;
-        
-        private int rightDescendants = 0;
-        private int leftDescendants = 0;
-
         private int height = 1;
 
         // Vertex constructors:
@@ -49,13 +45,6 @@ private class Vertex {
         public Vertex getParent() {
             return this.parent;
         }
-        public int getRightDescendants() {
-            return this.rightDescendants;
-        }
-        public int getLeftDescendants() {
-            return this.leftDescendants;
-        }
-
         public int getHeight() {
             return this.height;
         }
@@ -75,35 +64,23 @@ private class Vertex {
             return this.right!=null;
         }
 
-        public boolean isLeftSubtree() {
-            if (this.parent == null) return false;
-            return this.data <= this.parent.getData();
-        }
-        
-        public boolean isRightSubtree() {
-            if (this.parent == null) return false;
-            return this.data >= this.parent.getData();
-        }
-
-        public void incrementLeftDescendants() {this.leftDescendants++;}
-        public void decrementLeftDescendants() {this.leftDescendants--;}
-        public void incrementRightDescendants(){this.rightDescendants++;}
-        public void decrementRightDescendants(){this.rightDescendants--;}
-    
-        public boolean VerifyAVL(){// Checks to see if the AVL property is preserved or not.
-            if (Math.abs(leftDescendants - rightDescendants) > 1) return false;
-            return true;
-        }
-
-        // Returns the maximum of left Vertexes and right Vertexex of this Vertex.
-        public int getMaxdescendants() {
-            return Math.max(this.leftDescendants, this.rightDescendants);
+        public int getBalance() {
+            if (this.left == null && this.right == null)
+                return 0;
+            if (this.left == null)
+                return -1*this.right.getHeight();
+            if (this.right == null)
+                return this.left.getHeight();
+            else    
+                return this.left.getHeight() - this.right.getHeight();
         }
     }//End of Vertex class.
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
-    Vertex root;
+    Vertex root = null;
     int size = 0;
+
+    public AVLTree(){}
 
     // getter methods:
     public Vertex getRoot() {return this.root;}
@@ -116,144 +93,28 @@ private class Vertex {
     public void setRootData(int data) {this.getRoot().setData(data);}
 //-------------------------------------------------------------------------------------------------------------------------------------------
     // AVL tree rotation methods:
-    private void leftRotation(Vertex y) {
-        Vertex x = y.getRight();
-        Vertex z = y.getParent();
-        Vertex t2 = y.getLeft();
-        Vertex parent = z.getParent();
-
-        y.setLeft(z);
-        z.setRight(t2);
-        z.setParent(y);
-
-        if (parent == null) {
-            this.setRoot(y);
-            y.setParent(null);
-        }
-        
-        else {
-            if (parent.getLeft() == z) {
-                parent.setLeft(y);
-            }
-            else {
-                parent.setRight(y);
-            }
-            y.setParent(parent);
-        }
-
-        z.rightDescendants = y.leftDescendants;
-        y.leftDescendants = z.getMaxdescendants() + 1;
-        y.rightDescendants = x.getMaxdescendants() + 1;
-
-        
-        while (parent != null) {
-            if (parent.left == y)
-                parent.leftDescendants = y.getMaxdescendants()+1;
-            else
-                parent.rightDescendants = y.getMaxdescendants()+1;
-
-            y = parent;    
-            parent = parent.getParent();
-        }
-
-    }
-    
-    private void rightRotation(Vertex y) {
-        Vertex x = y.getLeft();
-        Vertex z = y.getParent();
-        Vertex t3 = y.getRight();
-        Vertex parent = z.getParent();
-        
-        y.setRight(z);
-        z.setLeft(t3);
-        
-        if (parent == null) {
-            this.setRoot(y);
-            y.setParent(null);
-            z.setParent(y);
-        }
-        
-        else {
-            if (parent.getLeft() == z) {
-                parent.setLeft(y);
-            }
-            else {
-                parent.setRight(y);
-            }
-            y.setParent(parent);
-            z.setParent(y);
-        }
-
-        z.leftDescendants = y.rightDescendants;
-        y.leftDescendants = x.getMaxdescendants() + 1;
-        y.rightDescendants = z.getMaxdescendants() + 1;
-
-        while (parent != null) {
-            if (parent.left == y) {
-                parent.leftDescendants = y.getMaxdescendants() + 1;
-            }
-            else {
-                parent.rightDescendants = y.getMaxdescendants() + 1;
-            }
-        }
-    }
-
-    private void leftRightRotation(Vertex x) {
-        Vertex y = x.getParent();
-        Vertex z = y.getParent();
-        Vertex t2 = x.getLeft();
-        z.setLeft(x);
-        x.setLeft(y);
-        y.setRight(t2);
-        y.setParent(x);
-        x.setParent(z);
-        
-        y.rightDescendants = x.leftDescendants;
-        x.leftDescendants = y.getMaxdescendants() + 1;
-        z.leftDescendants = x.getMaxdescendants() + 1;
-        
-        this.rightRotation(x);
-    }
-
-    private void rightLeftRotaion(Vertex x) {
-        Vertex y = x.getParent();
-        Vertex z = y.getParent();
-        Vertex t3 = x.getRight();
-        z.setRight(x);
-        x.setRight(y);
-        y.setLeft(t3);
-        y.setParent(x);
-        x.setParent(z);
-
-        y.leftDescendants = x.rightDescendants;
-        x.rightDescendants = y.getMaxdescendants() + 1;
-        z.rightDescendants = x.getMaxdescendants() + 1;        
-
-        this.leftRotation(x);
-    }
-
-    private Vertex rr(Vertex z) {
+    private Vertex rightRotation(Vertex z) {
         Vertex y = z.left; 
         Vertex T2 = y.right; 
 
         y.right = z; 
         z.left = T2; 
 
-        z.height = Math.max(z.left.getHeight(), z.right.getHeight()) + 1; 
-        y.height = Math.max(y.left.getHeight(), y.right.getHeight()) + 1; 
+        fixHeight(z); 
+        fixHeight(y);
 
         return y;
     }
 
-    private Vertex lr(Vertex z) {
+    private Vertex leftRotation(Vertex z) {
         Vertex y = z.right; 
         Vertex T2 = y.left; 
 
         y.left = z; 
         z.right = T2; 
 
-        z.height = Math.max(z.left.getHeight(), z.right.getHeight()) + 1;
-        y.height = Math.max(y.left.getHeight(), y.right.getHeight()) + 1;
+        fixHeight(z);
+        fixHeight(y);
 
         return y; 
     }
@@ -264,133 +125,158 @@ private class Vertex {
 
     public boolean isEmpty() {return this.size == 0;}
 
-    public void insert(int newData) {
-        
-        Vertex newVertex = new Vertex(newData);
+    // Helper method to make sure we don't call on null.
+    private static void fixHeight(Vertex vertex) {
 
-        if (this.isEmpty()) {
-            this.setRoot(newVertex);
-            this.size++;
+        if (vertex.left == null && vertex.right == null) {
+            vertex.height = 1;
             return;
         }
+        if (vertex.left == null) {
+            vertex.height = vertex.right.getHeight() + 1;
+            return;
+        }
+        if (vertex.right == null) {
+            vertex.height = vertex.left.getHeight() + 1;
+            return; 
+        }
+        vertex.height = Math.max(vertex.left.getHeight(), vertex.right.getHeight()) + 1;
+    }
 
-        Vertex curr = this.root;
+    public void insert(int newData) {
+        this.root = this.insert(root, newData);
+    }
 
-        while (true) {
-
-            if (newVertex.getData() > curr.getData() && curr.getRight() != null) {
-                curr = curr.getRight();
-            }
-            else if (newVertex.getData() > curr.getData() && curr.getRight() == null) {
-                curr.setRight(newVertex); 
-                newVertex.setParent(curr);
-                break;
-            }
-            else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) {
-                curr = curr.getLeft();
-            }
-            else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {
-                curr.setLeft(newVertex); 
-                newVertex.setParent(curr);
-                break;
-            }
-        }// End while.
-
-        this.size++;
+    private Vertex insert(Vertex vertex,int newData) {
         
-        if (this.getSize() >= 3) {
-            Vertex[] zyx = findUnbalanced(newVertex, "insert");
-            if (zyx[0] != null) {
-                this.fixTree(zyx);
+        if (vertex == null) {
+            this.root = new Vertex(newData);
+            return this.root;
+        }
+        
+        if (newData < vertex.getData()) {
+            vertex.setLeft(this.insert(vertex.left, newData));
+        }
+        else if (newData > vertex.getData()) {
+            vertex.setRight(this.insert(vertex.right, newData));
+        }
+        else {
+            return vertex;
+        }
+
+        fixHeight(vertex);
+        int balance = vertex.getBalance();
+
+        //Check all four rotation cases
+        //left left
+        if (balance > 1 && newData < vertex.left.getData()) {
+            return rightRotation(vertex);
+        }
+        //left right kink
+        if (balance > 1 && newData > vertex.left.getData()) {
+            vertex.setLeft(leftRotation(vertex.left));
+            return rightRotation(vertex);
+        }
+        //right right
+        if (balance < -1 && newData > vertex.right.getData()) {
+            return leftRotation(vertex);
+        }
+        //right left kink
+        if (balance < -1 && newData < vertex.right.getData()) {
+            vertex.right = rightRotation(vertex.right);
+            return leftRotation(vertex);
+        }
+
+        return vertex;
+    }// End insert();
+
+    private static Vertex getNextIninOrder(Vertex vertex) {
+        Vertex curr = vertex;
+
+        while (curr.left != null) {
+            curr = curr.getLeft();
+        }
+
+        return curr;
+    }
+
+    public void remove(int newData) {
+        this.root = this.remove(root, newData);
+    }
+
+    //returns root after it's done.
+    private Vertex remove(Vertex root, int removedData) {
+        if (root == null)
+            return root;
+
+        if (removedData < root.getData())
+            root.left = remove(root.left, removedData);
+        
+        else if (removedData > root.getData())
+            root.right = remove(root.right, removedData);
+
+        
+        else {
+            // Vertex with only one child or no child
+            if ((root.left == null) || 
+                (root.right == null)) {
+                Vertex temp = root.left != null ? 
+                            root.left : root.right;
+
+                // No child case
+                if (temp == null) {
+                    temp = root;
+                    root = null;
+                } else // One child case
+                    root = temp; // Copy the contents of 
+                                 // the non-empty child
+            } else {
+                // Vertex with two children: Get the 
+                // inorder successor (smallest in 
+                // the right subtree)
+                Vertex temp = getNextIninOrder(root.right);
+
+                // Copy the inorder successor's 
+                // data to this Vertex
+                root.data = temp.data;
+
+                // Delete the inorder successor
+                root.right = remove(root.right, temp.data);
             }
         }
-                
-    }// End insert();
-    
-    // A helper method to find the unbalanced Vertex.
-    private Vertex[] findUnbalanced(Vertex x, String func) {
-        
-        Vertex[] zyx = new Vertex[3];
-        
-        if (func.equals("insert")) {
-            zyx[2] = x;
-            
-            Vertex y = x.getParent();
-            Vertex z = y.getParent();
 
-            if (x.isLeftSubtree()) y.incrementLeftDescendants();
-            else if (x.isRightSubtree()) y.incrementRightDescendants();
+        // If the tree had only one Vertex then return
+        if (root == null)
+            return root;
 
-            if (y != null && y.isLeftSubtree() && z.getLeftDescendants() == y.getMaxdescendants()) z.incrementLeftDescendants();
-            else if (y != null && y.isRightSubtree() && z.getRightDescendants() == y.getMaxdescendants()) z.incrementRightDescendants();
+        fixHeight(root);
+        int balance = root.getBalance();
 
-            while (z!=null) {
-                
-                if (!z.VerifyAVL()) return zyx;
+        // Left Left Case
+        if (balance > 1 && root.left.getBalance() >= 0)
+            return rightRotation(root);
 
-                x = y;
-                y = z;
-                z = z.getParent();
-                
-                if (y.isLeftSubtree() && z!=null && z.getLeftDescendants() == y.getMaxdescendants()) 
-                    z.incrementLeftDescendants();
-                else if (y.isRightSubtree() && z!= null && z.getRightDescendants() == y.getMaxdescendants()) 
-                    z.incrementRightDescendants();
-            
-                zyx[0] = z; zyx[1] = y; zyx[2] = x;
+        // Left Right Case
+        if (balance > 1 && root.left.getBalance() < 0) {
+            root.left = leftRotation(root.left);
+            return rightRotation(root);
+        }
 
-                continue;
-            }// End while.
-        }// End if.
+        // Right Right Case
+        if (balance < -1 && root.right.getBalance() <= 0)
+            return leftRotation(root);
 
-        else { 
-            
-            if (func.equals("removedleft")) x.decrementLeftDescendants();
-            else x.decrementRightDescendants();
-            
-            Vertex unbalanced = x;
-            
-            while (unbalanced.getParent() != null) {
-                //ensures that the parent should decrement the leftDescendants or rightDescendants.
-                if (unbalanced.isLeftSubtree() && (Math.abs(unbalanced.getParent().getLeftDescendants() - unbalanced.getMaxdescendants())) > 1) {
-                    unbalanced.getParent().decrementLeftDescendants();
-                }
-                else if (unbalanced.isRightSubtree() && (Math.abs(unbalanced.getParent().getRightDescendants() - unbalanced.getMaxdescendants())) > 1) {
-                    unbalanced.getParent().decrementRightDescendants();
-                }
-                
-                if (!unbalanced.VerifyAVL()) {
-                    zyx[0] = unbalanced;
-                    zyx[1] = unbalanced.getRightDescendants() > unbalanced.getLeftDescendants() ? unbalanced.getRight() : unbalanced.getLeft();
-                    
-                    if (zyx[1].getRightDescendants() > zyx[1].getLeftDescendants()) {
-                        zyx[2] = zyx[1].getRight();
-                    }
-                    
-                    else if (zyx[1].getRightDescendants() < zyx[1].leftDescendants) {
-                        zyx[2] = zyx[1].getLeft();
-                    }
-                    // The height of the left and right subtrees of y are equal therefore:
-                    else if (zyx[1].isLeftSubtree()) {
-                        zyx[2] = zyx[1].getLeft();
-                    }
-                    
-                    else {
-                        zyx[2] = zyx[1].getRight();
-                    }
-                    
-                    break;
-                }
-                
-                unbalanced = unbalanced.getParent();
-            }// End while.
-        }// End else.
+        // Right Left Case
+        if (balance < -1 && root.right.getBalance() > 0) {
+            root.right = rightRotation(root.right);
+            return leftRotation(root);
+        }
 
-        return zyx;
-    }// End findUnbalanced().
+        return root;
+    }
 
     // Helper method that searches the tree and returns the vertex of the given arguement. returns null if data does not exist in tree.
-    private Vertex find(int data) {
+    public Vertex find(int data) {
 
         Vertex curr = this.getRoot();
 
@@ -403,98 +289,7 @@ private class Vertex {
         return null;
     }
 
-    // Helper method that nulls a certain vertex and removes refrence to the vertex from it's parent.
-    // !!!This method does not decrement the size of the tree.
-    private int removeRefrence(Vertex v) {
-
-        int data = v.getData();
-
-        if (v.getParent() == null) {
-            return data;
-        }
-
-        if (v.isLeftSubtree()) {
-            v.getParent().setLeft(null);
-            return data;
-        }
-
-        if (v.isRightSubtree()) {
-            v.getParent().setRight(null);
-            return data;
-        }
-
-        return data;
-    }
-
-    public int remove(int data) {
-        
-        Vertex removedVertex = this.find(data);
-
-        if (removedVertex == null) return -1;
-        size--; // Since the removedVertex is not null we will decrement size as we now know for sure that a Vertex is getting removed.
-
-        Vertex parentOfRemoved = null;
-        String position = new String();
-
-        if (removedVertex.getLeft() == null && removedVertex.getRight() == null) {
-            parentOfRemoved = removedVertex.getParent();
-            position = removedVertex.isLeftSubtree() ? "left" : "right";
-            this.removeRefrence(removedVertex);
-        }
-
-        else if (removedVertex.hasRight()) {
-            Vertex replacement = removedVertex.getRight();
-            while (replacement.hasLeft()) {
-                replacement = replacement.getLeft();
-            }
-            parentOfRemoved = replacement.getParent();
-            position = replacement.isLeftSubtree() ? "left" : "right";
-            removedVertex.setData(replacement.getData());
-            this.removeRefrence(replacement);
-        }
-
-        else if (removedVertex.hasLeft()) {
-            Vertex replacement = removedVertex.getLeft();
-            while (replacement.hasRight()) {
-                replacement = replacement.getRight();
-            }
-            parentOfRemoved = replacement.getParent();
-            position = replacement.isLeftSubtree() ? "left" : "right";
-            removedVertex.setData(replacement.getData());
-            this.removeRefrence(replacement);
-        }
-
-        Vertex[] zyx = this.findUnbalanced(parentOfRemoved, "removed" + position);
-
-        if (zyx[0] != null) this.fixTree(zyx);
-            
-        return data;
-    }
-
-    private void fixTree(Vertex[] zyx) {
-        Vertex y = zyx[1];
-        Vertex x = zyx[2];
-        if (y.isLeftSubtree() && x.isLeftSubtree()) {
-            this.rightRotation(y);
-            return;
-        }
-
-        if (y.isRightSubtree() && x.isRightSubtree()) {
-            this.leftRotation(y);
-            return;
-        }
-
-        if (y.isLeftSubtree() && x.isRightSubtree()) {
-            this.leftRightRotation(x);
-            return;
-        }
-
-        if (y.isRightSubtree() && x.isLeftSubtree()) {
-            this.rightLeftRotaion(x);
-            return;
-        }
-    }
-
+    
     // Returns an ArrayList containing all data in tree through levelOrder traversal of vertices.
     public ArrayList<Integer> levelOrder() {
 
@@ -528,11 +323,11 @@ private class Vertex {
         return data;
     }
 
-    private void preOrderHelper(Vertex node, ArrayList<Integer> data) {
-        if (node == null) return;
-        data.add(node.getData());
-        preOrderHelper(node.getLeft(), data);
-        preOrderHelper(node.getRight(), data);
+    private void preOrderHelper(Vertex vertex, ArrayList<Integer> data) {
+        if (vertex == null) return;
+        data.add(vertex.getData());
+        preOrderHelper(vertex.getLeft(), data);
+        preOrderHelper(vertex.getRight(), data);
     }
 
     public ArrayList<Integer> inOrder() {
@@ -541,32 +336,32 @@ private class Vertex {
         return data;
     }
 
-    private void inOrderHelper(Vertex node, ArrayList<Integer> data) {
-        if (node == null) return;
-        inOrderHelper(node.getLeft(), data);
-        data.add(node.getData());
-        inOrderHelper(node.getRight(), data);
+    private void inOrderHelper(Vertex vertex, ArrayList<Integer> data) {
+        if (vertex == null) return;
+        inOrderHelper(vertex.getLeft(), data);
+        data.add(vertex.getData());
+        inOrderHelper(vertex.getRight(), data);
     }
 
-    // //Method to graphically display the tree.
-    // public void display() { 
-    //     if (root == null) return;
+    //Method to graphically display the tree.(Got it from AI)
+    public void display() { 
+        if (root == null) return;
 
-    //     displayHelper(root, 0);
-    //     }
+        displayHelper(root, 0);
+        }
 
-    //     private void displayHelper(Vertex node, int level) {
-    //         if (node == null) return;
+        private void displayHelper(Vertex node, int level) {
+            if (node == null) return;
             
-    //         displayHelper(node.getRight(), level + 1);
+            displayHelper(node.getRight(), level + 1);
             
-    //         for (int i = 0; i < level; i++) {
-    //             System.out.print("    ");
-    //         }
-    //         System.out.println(node.getData());
+            for (int i = 0; i < level; i++) {
+                System.out.print("    ");
+            }
+            System.out.println(node.getData());
             
-    //         displayHelper(node.getLeft(), level + 1);
+            displayHelper(node.getLeft(), level + 1);
         
-    // }
+    }
 
 }// End of AVL tree class

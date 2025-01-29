@@ -1,6 +1,7 @@
 public class App {
     public static void main(String[] args) {
-        
+        System.out.println("----------------------------------------------------------------");
+        System.out.println("Phase1:");
         // Phase 1 Test:
         AVLTree avlTree = new AVLTree();
         avlTree.insert(22);
@@ -11,25 +12,30 @@ public class App {
         avlTree.insert(14);
         avlTree.insert(17);
         avlTree.insert(10);
-        // System.out.println(avlTree.levelOrder());
-        System.out.println(avlTree.preOrder());
-        System.out.println(avlTree.inOrder());
-        // avlTree.display();
+        System.out.println("Preorder: " + avlTree.preOrder());
+        System.out.println("Inorder: " + avlTree.inOrder());
+        avlTree.display();
+        System.out.println("----------------------------------------------------------------");
+
+        
         avlTree.insert(99);
         avlTree.insert(58);
-        // System.out.println(avlTree.levelOrder());
-        System.out.println(avlTree.preOrder());
-        System.out.println(avlTree.inOrder());
-        // avlTree.display();
+        System.out.println("Preorder: " + avlTree.preOrder());
+        System.out.println("Inorder: " + avlTree.inOrder());
+        avlTree.display();
+        System.out.println("----------------------------------------------------------------");
+
+        
         avlTree.remove(99);
         avlTree.remove(58);
-        // System.out.println(avlTree.levelOrder());
-        System.out.println(avlTree.preOrder());
-        System.out.println(avlTree.inOrder());
-        // avlTree.display();
+        System.out.println("Preorder: " + avlTree.preOrder());
+        System.out.println("Inorder: " + avlTree.inOrder());
+        avlTree.display();
+        
         System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 2 Test:
+        System.out.println("Phase2:");
         int[][] adjacencyMatrix = {
             {0, 12, 34, 30},
             {12, 0, 35, 42},
@@ -43,6 +49,7 @@ public class App {
         System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 3 Test:
+        System.out.println("Phase3:");
         EmployeeTree employeeTree = new EmployeeTree();
         employeeTree.insert(new String[] {"Zuck", "Brad", "Sara"});
         employeeTree.insert(new String[] {"Brad", "Jack", "Ellie", "Tim"});
@@ -55,6 +62,7 @@ public class App {
         System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 4 Test:
+        System.out.println("Phase4:");
         int[] arr = {4, 2, 5, 1, 3, 7, 6};
         MinHeap heap = new MinHeap(arr);
         
