@@ -20,6 +20,11 @@ public class Graph {
         public boolean equals(Vertex vertex) {
             return this.data == vertex.data;
         }
+
+        @Override
+        public String toString() {
+            return Integer.toString(this.data);
+        }
     }
 
     private class Edge {
@@ -69,7 +74,7 @@ public class Graph {
             this.vertices.add(new Vertex(i));
         }
 
-        for (int i = 0; i < adjacencyMatrix.length-1; i++) {
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
             for (int j = 1+i; j < adjacencyMatrix.length; j++) {
                 if (adjacencyMatrix[i][j] != 0) {
                     this.edges.add(new Edge(this.vertices.get(i), this.vertices.get(j), adjacencyMatrix[i][j]));
@@ -94,7 +99,7 @@ public class Graph {
         this.edges.add(new Edge(startingVertex, endingVertex, weight));
     }
 
-    // !!!this solution to TSP only works if an Edge exists from the final vertex to the starting vertex.
+    // !!!this solution to TSP only works if all vertices are connected to each other.(e.g. the upper triangle of the matrix is non zero)
     // Nearest Neighbor Heuristic algorithm to solve the TSP problem
     public ArrayList<Vertex> tspPath() {
         ArrayList<Vertex> visited = new ArrayList<>();
@@ -105,17 +110,19 @@ public class Graph {
             
             Vertex current = visited.get(visited.size() - 1);// get last visited vertex
             Edge minEdge = new Edge(null, null, Integer.MAX_VALUE);
-            
+            Vertex next = null;
+
             for (Edge edge : this.edges) {
                 if (edge.getStartingVertex().equals(current) && edge.getWeight() < minEdge.getWeight() && !visited.contains(edge.getEndingVertex())) {
                     minEdge = edge;
-                    Vertex next = edge.getEndingVertex();
+                    next = edge.getEndingVertex();
                 }
                 else if (edge.getEndingVertex().equals(current) && edge.getWeight() < minEdge.getWeight() && !visited.contains(edge.getStartingVertex())) {
                     minEdge = edge;
-                    Vertex next = edge.getStartingVertex();
+                    next = edge.getStartingVertex();
                 }
             }
+            visited.add(next);
         }
         visited.add(startingVertex);
         return visited;
@@ -194,5 +201,11 @@ public class Graph {
         }// End while loop, all Vertices have been visited.
         
         return visited;
+    }
+
+    public void printGraphEdges() {
+        for (Edge edge : this.edges) {
+            System.out.println(edge.getStartingVertex().getData() + " <-> " + edge.getEndingVertex().getData() + " : " + edge.getWeight());
+        }
     }
 }

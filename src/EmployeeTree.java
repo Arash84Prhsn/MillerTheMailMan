@@ -9,7 +9,7 @@ public class EmployeeTree {
 
         // Vertex attributes:
         String data = "";
-        ArrayList<Vertex> children = null;
+        ArrayList<Vertex> children = new ArrayList<>();
         Vertex parent = null;
 
         // Vertex constructors:
