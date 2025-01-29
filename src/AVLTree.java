@@ -1,5 +1,4 @@
 // Phase1:
-
 import java.util.ArrayList;
 
 public class AVLTree
@@ -12,9 +11,11 @@ private class Vertex {
         private Vertex right = null;
         private Vertex parent = null;
         
-        int rightDescendants = 0;
-        int leftDescendants = 0;
-        
+        private int rightDescendants = 0;
+        private int leftDescendants = 0;
+
+        private int height = 1;
+
         // Vertex constructors:
         public Vertex(int data, Vertex left, Vertex right) {
             this.data = data;
@@ -55,8 +56,8 @@ private class Vertex {
             return this.leftDescendants;
         }
 
-        public int getHeight() {// Returns the maximum of left Vertexes and right Vertexex of this Vertex.
-            return Math.max(this.leftDescendants, this.rightDescendants);
+        public int getHeight() {
+            return this.height;
         }
 
         // Vertex setter methods:
@@ -94,6 +95,10 @@ private class Vertex {
             return true;
         }
 
+        // Returns the maximum of left Vertexes and right Vertexex of this Vertex.
+        public int getMaxdescendants() {
+            return Math.max(this.leftDescendants, this.rightDescendants);
+        }
     }//End of Vertex class.
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,51 +117,148 @@ private class Vertex {
 //-------------------------------------------------------------------------------------------------------------------------------------------
     // AVL tree rotation methods:
     private void leftRotation(Vertex y) {
-        Vertex t1 = y.getParent().getLeft();
+        Vertex x = y.getRight();
+        Vertex z = y.getParent();
         Vertex t2 = y.getLeft();
-        y.setLeft(y.getParent());
-        
-        if (y.getParent().getParent() != null)
-            y.getParent().getParent().setRight(y);
-        
-        y.setParent(y.getParent().getParent());
+        Vertex parent = z.getParent();
 
-        y.getLeft().setParent(y);
+        y.setLeft(z);
+        z.setRight(t2);
+        z.setParent(y);
+
+        if (parent == null) {
+            this.setRoot(y);
+            y.setParent(null);
+        }
         
-        y.getLeft().setLeft(t1);
-        y.getLeft().setRight(t2);
-        if (t2 != null)
-            t2.setParent(y.getLeft());
+        else {
+            if (parent.getLeft() == z) {
+                parent.setLeft(y);
+            }
+            else {
+                parent.setRight(y);
+            }
+            y.setParent(parent);
+        }
+
+        z.rightDescendants = y.leftDescendants;
+        y.leftDescendants = z.getMaxdescendants() + 1;
+        y.rightDescendants = x.getMaxdescendants() + 1;
+
+        
+        while (parent != null) {
+            if (parent.left == y)
+                parent.leftDescendants = y.getMaxdescendants()+1;
+            else
+                parent.rightDescendants = y.getMaxdescendants()+1;
+
+            y = parent;    
+            parent = parent.getParent();
+        }
+
     }
     
     private void rightRotation(Vertex y) {
-        Vertex t1 = y.getRight();
-        Vertex t2 = y.getParent().getRight();
-        y.setRight(y.getParent());
+        Vertex x = y.getLeft();
+        Vertex z = y.getParent();
+        Vertex t3 = y.getRight();
+        Vertex parent = z.getParent();
         
-        if (y.getParent().getParent() != null)
-            y.getParent().getParent().setLeft(y);
+        y.setRight(z);
+        z.setLeft(t3);
         
-        y.setParent(y.getParent().getParent());
+        if (parent == null) {
+            this.setRoot(y);
+            y.setParent(null);
+            z.setParent(y);
+        }
+        
+        else {
+            if (parent.getLeft() == z) {
+                parent.setLeft(y);
+            }
+            else {
+                parent.setRight(y);
+            }
+            y.setParent(parent);
+            z.setParent(y);
+        }
 
-        y.getRight().setParent(y);
-        
-        y.getRight().setLeft(t1);
-        y.getRight().setRight(t2);
-        
-        if (t1 != null)
-            t1.setParent(y.getLeft());
+        z.leftDescendants = y.rightDescendants;
+        y.leftDescendants = x.getMaxdescendants() + 1;
+        y.rightDescendants = z.getMaxdescendants() + 1;
+
+        while (parent != null) {
+            if (parent.left == y) {
+                parent.leftDescendants = y.getMaxdescendants() + 1;
+            }
+            else {
+                parent.rightDescendants = y.getMaxdescendants() + 1;
+            }
+        }
     }
 
     private void leftRightRotation(Vertex x) {
-        leftRotation(x);
-        rightRotation(x);
+        Vertex y = x.getParent();
+        Vertex z = y.getParent();
+        Vertex t2 = x.getLeft();
+        z.setLeft(x);
+        x.setLeft(y);
+        y.setRight(t2);
+        y.setParent(x);
+        x.setParent(z);
+        
+        y.rightDescendants = x.leftDescendants;
+        x.leftDescendants = y.getMaxdescendants() + 1;
+        z.leftDescendants = x.getMaxdescendants() + 1;
+        
+        this.rightRotation(x);
     }
 
     private void rightLeftRotaion(Vertex x) {
-        rightRotation(x);
-        leftRotation(x);
+        Vertex y = x.getParent();
+        Vertex z = y.getParent();
+        Vertex t3 = x.getRight();
+        z.setRight(x);
+        x.setRight(y);
+        y.setLeft(t3);
+        y.setParent(x);
+        x.setParent(z);
+
+        y.leftDescendants = x.rightDescendants;
+        x.rightDescendants = y.getMaxdescendants() + 1;
+        z.rightDescendants = x.getMaxdescendants() + 1;        
+
+        this.leftRotation(x);
     }
+
+    private Vertex rr(Vertex z) {
+        Vertex y = z.left; 
+        Vertex T2 = y.right; 
+
+        y.right = z; 
+        z.left = T2; 
+
+        z.height = Math.max(z.left.getHeight(), z.right.getHeight()) + 1; 
+        y.height = Math.max(y.left.getHeight(), y.right.getHeight()) + 1; 
+
+        return y;
+    }
+
+    private Vertex lr(Vertex z) {
+        Vertex y = z.right; 
+        Vertex T2 = y.left; 
+
+        y.left = z; 
+        z.right = T2; 
+
+        z.height = Math.max(z.left.getHeight(), z.right.getHeight()) + 1;
+        y.height = Math.max(y.left.getHeight(), y.right.getHeight()) + 1;
+
+        return y; 
+    }
+
+
     // End of rotation methods.
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -176,16 +278,17 @@ private class Vertex {
 
         while (true) {
 
-            if (newVertex.getData() > curr.getData() && curr.getRight() != null) curr = curr.getRight();
-
+            if (newVertex.getData() > curr.getData() && curr.getRight() != null) {
+                curr = curr.getRight();
+            }
             else if (newVertex.getData() > curr.getData() && curr.getRight() == null) {
                 curr.setRight(newVertex); 
                 newVertex.setParent(curr);
                 break;
             }
-
-            else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) curr = curr.getLeft();
-
+            else if (newVertex.getData() < curr.getData() && curr.getLeft() != null) {
+                curr = curr.getLeft();
+            }
             else if (newVertex.getData() < curr.getData() && curr.getLeft() == null) {
                 curr.setLeft(newVertex); 
                 newVertex.setParent(curr);
@@ -218,8 +321,8 @@ private class Vertex {
             if (x.isLeftSubtree()) y.incrementLeftDescendants();
             else if (x.isRightSubtree()) y.incrementRightDescendants();
 
-            if (y != null && y.isLeftSubtree()) z.incrementLeftDescendants();
-            else if (y != null && y.isRightSubtree()) z.incrementRightDescendants();
+            if (y != null && y.isLeftSubtree() && z.getLeftDescendants() == y.getMaxdescendants()) z.incrementLeftDescendants();
+            else if (y != null && y.isRightSubtree() && z.getRightDescendants() == y.getMaxdescendants()) z.incrementRightDescendants();
 
             while (z!=null) {
                 
@@ -229,8 +332,10 @@ private class Vertex {
                 y = z;
                 z = z.getParent();
                 
-                if (y.isLeftSubtree() && z!=null) z.incrementLeftDescendants();
-                else if (y.isRightSubtree() && z!= null) z.incrementRightDescendants();
+                if (y.isLeftSubtree() && z!=null && z.getLeftDescendants() == y.getMaxdescendants()) 
+                    z.incrementLeftDescendants();
+                else if (y.isRightSubtree() && z!= null && z.getRightDescendants() == y.getMaxdescendants()) 
+                    z.incrementRightDescendants();
             
                 zyx[0] = z; zyx[1] = y; zyx[2] = x;
 
@@ -240,17 +345,20 @@ private class Vertex {
 
         else { 
             
-            if (func.equals("removedLeft")) x.decrementLeftDescendants();
-            else x.decrementRightDescendants();             
+            if (func.equals("removedleft")) x.decrementLeftDescendants();
+            else x.decrementRightDescendants();
             
             Vertex unbalanced = x;
             
             while (unbalanced.getParent() != null) {
+                //ensures that the parent should decrement the leftDescendants or rightDescendants.
+                if (unbalanced.isLeftSubtree() && (Math.abs(unbalanced.getParent().getLeftDescendants() - unbalanced.getMaxdescendants())) > 1) {
+                    unbalanced.getParent().decrementLeftDescendants();
+                }
+                else if (unbalanced.isRightSubtree() && (Math.abs(unbalanced.getParent().getRightDescendants() - unbalanced.getMaxdescendants())) > 1) {
+                    unbalanced.getParent().decrementRightDescendants();
+                }
                 
-                unbalanced = unbalanced.getParent();
-                if (unbalanced.isLeftSubtree()) unbalanced.getParent().decrementLeftDescendants();
-                else if (unbalanced.isRightSubtree()) unbalanced.getParent().decrementRightDescendants();
-
                 if (!unbalanced.VerifyAVL()) {
                     zyx[0] = unbalanced;
                     zyx[1] = unbalanced.getRightDescendants() > unbalanced.getLeftDescendants() ? unbalanced.getRight() : unbalanced.getLeft();
@@ -273,7 +381,8 @@ private class Vertex {
                     
                     break;
                 }
-
+                
+                unbalanced = unbalanced.getParent();
             }// End while.
         }// End else.
 
@@ -412,5 +521,52 @@ private class Vertex {
 
         return data;
     }
+
+    public ArrayList<Integer> preOrder() {
+        ArrayList<Integer> data = new ArrayList<>();
+        this.preOrderHelper(this.getRoot(), data);
+        return data;
+    }
+
+    private void preOrderHelper(Vertex node, ArrayList<Integer> data) {
+        if (node == null) return;
+        data.add(node.getData());
+        preOrderHelper(node.getLeft(), data);
+        preOrderHelper(node.getRight(), data);
+    }
+
+    public ArrayList<Integer> inOrder() {
+        ArrayList<Integer> data = new ArrayList<>();
+        this.inOrderHelper(this.getRoot(), data);
+        return data;
+    }
+
+    private void inOrderHelper(Vertex node, ArrayList<Integer> data) {
+        if (node == null) return;
+        inOrderHelper(node.getLeft(), data);
+        data.add(node.getData());
+        inOrderHelper(node.getRight(), data);
+    }
+
+    // //Method to graphically display the tree.
+    // public void display() { 
+    //     if (root == null) return;
+
+    //     displayHelper(root, 0);
+    //     }
+
+    //     private void displayHelper(Vertex node, int level) {
+    //         if (node == null) return;
+            
+    //         displayHelper(node.getRight(), level + 1);
+            
+    //         for (int i = 0; i < level; i++) {
+    //             System.out.print("    ");
+    //         }
+    //         System.out.println(node.getData());
+            
+    //         displayHelper(node.getLeft(), level + 1);
+        
+    // }
 
 }// End of AVL tree class

@@ -11,13 +11,22 @@ public class App {
         avlTree.insert(14);
         avlTree.insert(17);
         avlTree.insert(10);
-        System.out.println(avlTree.levelOrder());
+        // System.out.println(avlTree.levelOrder());
+        System.out.println(avlTree.preOrder());
+        System.out.println(avlTree.inOrder());
+        // avlTree.display();
         avlTree.insert(99);
         avlTree.insert(58);
-        System.out.println(avlTree.levelOrder());
+        // System.out.println(avlTree.levelOrder());
+        System.out.println(avlTree.preOrder());
+        System.out.println(avlTree.inOrder());
+        // avlTree.display();
         avlTree.remove(99);
         avlTree.remove(58);
-        System.out.println(avlTree.levelOrder());
+        // System.out.println(avlTree.levelOrder());
+        System.out.println(avlTree.preOrder());
+        System.out.println(avlTree.inOrder());
+        // avlTree.display();
         System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 2 Test:
