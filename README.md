@@ -53,7 +53,7 @@ In order to implement the AVLtree a private Vertex class was created that holds 
 in the case that the avl rule has been broken, do the proper rotations to restore the avl property of the tree.
 
 > fixHeight(vertex) : this method fixes the height of certain vertex and ensures that the height is what it is supposed to be.
- 
+    
 > leftRotation(z) : performs left rotation on subtree rooted z.
  
 > rightRotation(z) : performs right rotation on subtree rooted z.
@@ -89,3 +89,10 @@ us the string names of the newly inserted employees that work under the parent. 
 removal is done by removing the employee from the parent vertexe's list of children. In the case that we wanted to remove the root we simply null it and set size to 0.
 and after each removal the size is reset using the `countSize()` method.
 ## MinHeap
+The MinHeap has been implemented for the purpose of implementing the heapSort algorithm and sorting Miller's letters.
+
+The MinHeap as a linked structure and is a complete tree, Therefore insertion is done by performing level-order traversal on the tree and inserting at the
+first empty spot and bubbling up and heapifying the tree and ensure the minheap property is preserved.
+
+You are only allowed to remove the root of the heap. after removal of the root the last vertex in heap is found by level-order traversal and placed at the root.
+After that we bubble down to heapify the tree and ensure the minheap property is preserved.
