@@ -4,14 +4,17 @@ public class App {
         System.out.println("Phase1:");
         // Phase 1 Test:
         AVLTree avlTree = new AVLTree();
-        avlTree.insert(22);
+        avlTree.insert(22);     
         avlTree.insert(36);
         avlTree.insert(19);
         avlTree.insert(37);
+        avlTree.insert(69);
         avlTree.insert(44);
+        avlTree.insert(37);
         avlTree.insert(14);
-        avlTree.insert(17);
-        avlTree.insert(10);
+        avlTree.insert(51);
+        avlTree.insert(7);
+        avlTree.insert(1);
         System.out.println("Preorder: " + avlTree.preOrder());
         System.out.println("Inorder: " + avlTree.inOrder());
         avlTree.display();
