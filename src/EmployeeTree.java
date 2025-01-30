@@ -3,7 +3,6 @@
 import java.util.ArrayList;
 
 public class EmployeeTree {
-
 // Private Vertex class.----------------------------------------------------------
     private class Vertex {
 
@@ -115,7 +114,29 @@ public class EmployeeTree {
 
         Vertex parentVertex = removedVertex.getParent();
         parentVertex.getChildren().remove(removedVertex);
-        size--;
+        this.size = this.countSize();
+    }
+
+    private int countSize() {
+        if (this.root == null) {
+            return 0;
+        }
+
+        int size = 0;
+        Queue<Vertex> queue = new Queue<>();
+
+        queue.enqueue(this.root);
+
+        while (!queue.isEmpty()) {
+            Vertex current = queue.dequeue();
+            size++;
+
+            for (Vertex v : current.getChildren()) {
+                queue.enqueue(v);
+            }
+        }
+
+        return size;
     }
     
     public Vertex bfs(String item) {

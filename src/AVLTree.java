@@ -118,8 +118,6 @@ private class Vertex {
 
         return y; 
     }
-
-
     // End of rotation methods.
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -143,11 +141,13 @@ private class Vertex {
         vertex.height = Math.max(vertex.left.getHeight(), vertex.right.getHeight()) + 1;
     }
 
+    // The insert method of the avl tree.
     public void insert(int newData) {
-        this.root = this.insert(root, newData);
+        this.root = this.insertHelper(this.root, newData);
     }
 
-    private Vertex insert(Vertex vertex,int newData) {
+    //Ends up returning root.
+    private Vertex insertHelper(Vertex vertex,int newData) {
         
         if (vertex == null) {
             this.root = new Vertex(newData);
@@ -155,15 +155,15 @@ private class Vertex {
         }
         
         if (newData < vertex.getData()) {
-            vertex.setLeft(this.insert(vertex.left, newData));
+            vertex.setLeft(this.insertHelper(vertex.left, newData));
         }
         else if (newData > vertex.getData()) {
-            vertex.setRight(this.insert(vertex.right, newData));
+            vertex.setRight(this.insertHelper(vertex.right, newData));
         }
         else {
             return vertex;
         }
-
+                                
         fixHeight(vertex);
         int balance = vertex.getBalance();
 
@@ -201,78 +201,71 @@ private class Vertex {
     }
 
     public void remove(int newData) {
-        this.root = this.remove(root, newData);
+        this.root = this.removeHelper(root, newData);
     }
 
     //returns root after it's done.
-    private Vertex remove(Vertex root, int removedData) {
-        if (root == null)
-            return root;
+    private Vertex removeHelper(Vertex vertex, int removedData) {
+        if (vertex == null)
+            return vertex;
 
-        if (removedData < root.getData())
-            root.left = remove(root.left, removedData);
+        if (removedData < vertex.getData())
+            vertex.left = removeHelper(vertex.left, removedData);
         
-        else if (removedData > root.getData())
-            root.right = remove(root.right, removedData);
+        else if (removedData > vertex.getData())
+            vertex.right = removeHelper(vertex.right, removedData);
 
         
         else {
             // Vertex with only one child or no child
-            if ((root.left == null) || 
-                (root.right == null)) {
-                Vertex temp = root.left != null ? 
-                            root.left : root.right;
-
+            if ((vertex.left == null) || (vertex.right == null)) {
+                Vertex temp = vertex.left != null ? vertex.left : vertex.right;
                 // No child case
                 if (temp == null) {
-                    temp = root;
-                    root = null;
-                } else // One child case
-                    root = temp; // Copy the contents of 
-                                 // the non-empty child
-            } else {
-                // Vertex with two children: Get the 
-                // inorder successor (smallest in 
-                // the right subtree)
-                Vertex temp = getNextIninOrder(root.right);
-
-                // Copy the inorder successor's 
-                // data to this Vertex
-                root.data = temp.data;
-
-                // Delete the inorder successor
-                root.right = remove(root.right, temp.data);
+                    temp = vertex;
+                    vertex = null;
+                } 
+                else {// One child case
+                    vertex = temp; 
+                }
+            } 
+            else {
+                // Vertex with two children:
+                Vertex temp = getNextIninOrder(vertex.right);
+                vertex.data = temp.data;
+                // Delete the next one in in-order.
+                vertex.right = removeHelper(vertex.right, temp.data);
             }
         }
 
         // If the tree had only one Vertex then return
-        if (root == null)
-            return root;
+        if (vertex == null)
+            return vertex;
 
-        fixHeight(root);
-        int balance = root.getBalance();
+        fixHeight(vertex);
+        int balance = vertex.getBalance();
 
         // Left Left Case
-        if (balance > 1 && root.left.getBalance() >= 0)
-            return rightRotation(root);
+        if (balance > 1 && vertex.left.getBalance() >= 0)
+            return rightRotation(vertex);
 
         // Left Right Case
-        if (balance > 1 && root.left.getBalance() < 0) {
-            root.left = leftRotation(root.left);
-            return rightRotation(root);
+        if (balance > 1 && vertex.left.getBalance() < 0) {
+            vertex.left = leftRotation(vertex.left);
+            return rightRotation(vertex);
         }
 
         // Right Right Case
-        if (balance < -1 && root.right.getBalance() <= 0)
-            return leftRotation(root);
+        if (balance < -1 && vertex.right.getBalance() <= 0)
+            return leftRotation(vertex);
 
         // Right Left Case
-        if (balance < -1 && root.right.getBalance() > 0) {
-            root.right = rightRotation(root.right);
-            return leftRotation(root);
+        if (balance < -1 && vertex.right.getBalance() > 0) {
+            vertex.right = rightRotation(vertex.right);
+            return leftRotation(vertex);
         }
 
-        return root;
+        return vertex;
     }
 
     // Helper method that searches the tree and returns the vertex of the given arguement. returns null if data does not exist in tree.
@@ -285,7 +278,6 @@ private class Vertex {
             if (data < curr.getData()) curr = curr.getLeft();
             if (data > curr.getData()) curr = curr.getRight();
         }
-
         return null;
     }
 

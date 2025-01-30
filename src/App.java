@@ -16,7 +16,6 @@ public class App {
         System.out.println("Inorder: " + avlTree.inOrder());
         avlTree.display();
         System.out.println("----------------------------------------------------------------");
-
         
         avlTree.insert(99);
         avlTree.insert(58);
@@ -25,13 +24,13 @@ public class App {
         avlTree.display();
         System.out.println("----------------------------------------------------------------");
 
-        
         avlTree.remove(99);
         avlTree.remove(58);
         System.out.println("Preorder: " + avlTree.preOrder());
         System.out.println("Inorder: " + avlTree.inOrder());
         avlTree.display();
         
+        System.out.println("----------------------------------------------------------------");
         System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 2 Test:
@@ -47,6 +46,7 @@ public class App {
         System.out.println(graph.tspPath());
         System.out.println(graph.tspTotalWeight());
         System.out.println("----------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 3 Test:
         System.out.println("Phase3:");
@@ -60,19 +60,29 @@ public class App {
         employeeTree.insert(new String[] {"Sam", "Bill"});
         System.out.println(employeeTree.levelOrderTraversal());
         System.out.println("----------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
         // Phase 4 Test:
         System.out.println("Phase4:");
         int[] arr = {4, 2, 5, 1, 3, 7, 6};
         MinHeap heap = new MinHeap(arr);
         
-        MinHeap.heapSort(arr);
-
+        System.out.print("Unsorted array: ");
         for (int i : arr) {
             System.out.print(i + " ");
         }
         System.out.println();
+
+        MinHeap.heapSort(arr);
+        System.out.print("Sorted array: ");
+        for (int i : arr) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        System.out.print("MinHeap of the original array(Level-order of heap) :");
         heap.levelOrderPrint();
+        System.out.println("----------------------------------------------------------------");
 //------------------------------------------------------------------------------------------
     }
 }

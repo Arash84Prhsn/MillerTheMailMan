@@ -117,7 +117,7 @@ public class MinHeap {
         }
 
         this.bubbleUp(insertedVertex);
-
+                                        
     }// End insert
 
     public int removeMin() {
