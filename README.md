@@ -53,10 +53,15 @@ In order to implement the AVLtree a private Vertex class was created that holds 
 in the case that the avl rule has been broken, do the proper rotations to restore the avl property of the tree.
 
 > fixHeight(vertex) : this method fixes the height of certain vertex and ensures that the height is what it is supposed to be.
+ 
 > leftRotation(z) : performs left rotation on subtree rooted z.
+ 
 > rightRotation(z) : performs right rotation on subtree rooted z.
+ 
 > insertHelper(root, newData) recursive method that takes root and newData as it's initial parameters and inserts new data and ensures that the avl property is preserved.
+ 
 > removeHelper(root, removedData) recursive method that takes root and removedData as it's initial parameters and removes the removedData from 
+
 > the tree and ensures that the avl property is preserved.
 ## Graph
 In order to use the adjacency matrix that Miller has for solving the TSP, a Graph structure has been implemented.
